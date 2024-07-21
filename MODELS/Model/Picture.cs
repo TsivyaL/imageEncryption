@@ -15,7 +15,10 @@ namespace MODELS.Model
         public int Id { get; set; }
         public byte[] EncryptionPicture { get; set; }
         public DateTime dateCreate { get; set; }
-      
+        public int UserId { get; set; }
+        public User User { get; set; }
+        public string keyBase64 { get; set; }
+        public string ivBase64 { get; set; }
 
     }
 }

@@ -9,11 +9,11 @@ namespace DAL.Interfaces
 {
     public interface IUserData
     {
-        public bool CreateUser(UserDto newUser);
-        public bool UpdateUser(UserDto updateUser);    
-        public bool DeleteUser(int deleteUserId);
-        public UserDto GetUser(int userId); 
-        public List<UserDto> GetAllUsers(); 
+        public Task<bool> CreateUser(UserDto newUser);
+        public Task<bool> UpdateUser(UserDto updateUser);    
+        public Task<UserDto> GetUser(int userId); 
+        public Task<List<UserDto>> GetAllUsers();
+        public Task<bool> ResetPassword(string password, int id);
 
     }
 }

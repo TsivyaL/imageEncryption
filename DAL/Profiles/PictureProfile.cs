@@ -12,8 +12,10 @@ namespace DAL.Profiles
     {
         public PictureProfile() 
         {
-            CreateMap<Picture, PictureDto>();
-            CreateMap<PictureDto, Picture>();
-        } 
+            CreateMap<Picture, PictureDto>().ForMember(dest => dest.CreateUserId, opt => opt.MapFrom(src => src.UserId));
+
+            CreateMap<PictureDto, Picture>().ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.CreateUserId));
+
+        }
     }
 }
