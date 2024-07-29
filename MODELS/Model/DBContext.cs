@@ -20,7 +20,7 @@ namespace MODELS.Model
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=DESKTOP-F77S003\\SQLEXPRESS01;Initial Catalog=s;Integrated Security=SSPI;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Data Source=DESKTOP-F77S003\\SQLEXPRESS01;Initial Catalog=ImageEncryption2;Integrated Security=SSPI;Trusted_Connection=True;");
             }
         }
 
@@ -32,13 +32,15 @@ namespace MODELS.Model
 
                 entity.HasMany(u => u.UserPictures)
                       .WithOne(p => p.User)
-                      .HasForeignKey(p => p.UserId)
+                      .HasForeignKey(p => p.UserId)  
                       .OnDelete(DeleteBehavior.Cascade);
+                entity.Property(e => e.Id).UseIdentityColumn();
             });
 
             modelBuilder.Entity<Picture>(entity =>
             {
                 entity.ToTable("Picture");
+                entity.Property(e => e.Id).UseIdentityColumn();
             });
 
             OnModelCreatingPartial(modelBuilder);

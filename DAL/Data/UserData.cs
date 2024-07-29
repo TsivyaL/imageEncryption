@@ -71,6 +71,15 @@ namespace DAL.Data
             var isOk = await _context.SaveChangesAsync() >= 0;
             return isOk;
         }
+
+        public async Task<bool> DeleteUser(int idToDelete)
+        {
+            var userModel = await _context.Users.FindAsync(idToDelete);
+            if(userModel == null) return false;
+            _context.Users.Remove(userModel);
+            var isOk = await _context.SaveChangesAsync() >= 0;
+            return isOk;
+        }
     }
     
 }

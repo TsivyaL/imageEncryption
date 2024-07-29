@@ -19,22 +19,39 @@ namespace DAL.Data
          _context = context;
             _mapper = mapper;   
         }
-         public async Task<bool> CreatePicture(PictureDto newPicture)
+        public async Task<bool> CreatePicture(PictureDto newPicture)
         {
-            var newPictureModel=_mapper.Map<Picture>(newPicture);   
-            var createUser=await _context.Users.FirstOrDefaultAsync(x=>x.Id==newPicture.CreateUserId);
-            if (createUser != null) {
-                createUser.UserPictures.Add(newPictureModel);  
-             await   _context.Pictures.AddAsync(newPictureModel);
-                var isOk = await  _context.SaveChangesAsync() >= 0;
-                return isOk;    
+            try
+            {
+                var newPictureModel = _mapper.Map<Picture>(newPicture);
+                newPictureModel.Id = 0; // וודא שה-Id הוא 0 או לא מוגדר
+
+                await _context.Pictures.AddAsync(newPictureModel);
+                var isOk = await _context.SaveChangesAsync() > 0;
+
+                if (isOk)
+                {
+                    var user = await _context.Users.FindAsync(newPicture.CreateUserId);
+                    if (user != null)
+                    {
+                        user.UserPictures.Add(newPictureModel);
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                return isOk;
             }
-            return false;   
+            catch (Exception ex)
+            {
+                // Log the exception
+                return false;
+            }
         }
+           
 
         public async Task<bool> DeletePicture(int deletePictureId)//נגידדדדדדדדדדדדד שזה עובדדדדדדדדדד......................
         {
-            var pictureToDelete =await _context.Pictures.FirstOrDefaultAsync(x => x.Id == deletePictureId);
+            var pictureToDelete =await _context.Pictures.FindAsync(deletePictureId);
             if (pictureToDelete != null)
             {
                 _context.Pictures.Remove(pictureToDelete);
@@ -46,7 +63,7 @@ namespace DAL.Data
 
         public async Task<PictureDto> GetPicture(int pictureId)
         {
-            var pictureModel = await _context.Pictures.FirstOrDefaultAsync(x => x.Id == pictureId);
+            var pictureModel = await _context.Pictures.FindAsync(pictureId);
             if (pictureModel != null) { 
                 var pictureToGet= _mapper.Map<PictureDto>(pictureModel);
                 return pictureToGet;    
@@ -56,7 +73,10 @@ namespace DAL.Data
 
         public async Task<List<PictureDto>> GetAllPicture(int userId)
         {
-            var user=await _context.Users.FirstOrDefaultAsync(x=>x.Id == userId);
+            var user = await _context.Users
+       .Include(u => u.UserPictures)
+       .FirstOrDefaultAsync(u => u.Id == userId);
+
             if (user != null) { 
             var pictures= user.UserPictures.ToList();    
               var  picturesDto=_mapper.Map<List<PictureDto>>(pictures);
@@ -66,7 +86,7 @@ namespace DAL.Data
         }
         public async Task<List<PictureDto>> GetAllPicture(string key,string iv)
         {
-            var pictureList = _context.Pictures.Where(x=>x.keyBase64==key&&x.ivBase64==iv).ToListAsync();
+            var pictureList =await _context.Pictures.Where(x=>x.keyBase64==key&&x.ivBase64==iv).ToListAsync();
             if(pictureList!= null) {
               var pictureDto=_mapper.Map<List<PictureDto>>(pictureList);
                 return pictureDto;  

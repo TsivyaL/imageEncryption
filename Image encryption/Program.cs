@@ -1,183 +1,137 @@
-////using DAL.Interfaces;
-////using DAL.Data;
-////using Microsoft.EntityFrameworkCore;
-////using MODELS.Model;
-////using Serilog;
-////using Project.middleWare;
-////using Microsoft.AspNetCore.Http;
-////using BL.Interface;
-////using BL.Services;
-////using Image_encryption.middleWare;
-////using AutoMapper;
-////using AutoMapper.Extensions.Microsoft.DependencyInjection;
-////using DAL.Profiles;
-////using DAL.DTO;
-////namespace Project
-////{
-////    public class Program
-////    {
-////        public static void Main(string[] args)
-////        {
-////            //string Cors = "_Cors";
-////            var builder = WebApplication.CreateBuilder(args);
 
-////            // Add services to the container.
-////            builder.Services.AddControllers();
-////            builder.Services.AddEndpointsApiExplorer();
-////            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-////            builder.Services.AddSwaggerGen();
-////            builder.Services.AddScoped<IUserService, UserService>();
-////            builder.Services.AddScoped<IPictureService, PictureService>();
-////            builder.Services.AddScoped<IUserData, UserData>();
-////            builder.Services.AddScoped<IPictureData, PictureData>();
-
-
-////            //builder.Services.AddCors(op =>
-////            //{
-////            //    op.AddPolicy(Cors, builder =>
-////            //    {
-////            //        builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
-////            //    });
-////            //});
-
-////            builder.Services.AddDbContext<DBContext>(op => op.UseSqlServer("Data Source=DESKTOP-F77S003\\SQLEXPRESS01;Initial Catalog=s;Integrated Security=SSPI;Trusted_Connection=True;"));
-////            Log.Logger = new LoggerConfiguration()
-////             .WriteTo.File(@"c:/", rollingInterval: RollingInterval.Day)
-////             .CreateLogger();
-
-////            var app = builder.Build();
-
-////            // Configure the HTTP request pipeline.
-////            if (app.Environment.IsDevelopment())
-////            {
-////                app.UseSwagger();
-////                app.UseSwaggerUI();
-////            }
-
-////            app.UseMiddleware<ErrorGlobalMiddleWare>();
-////            app.UseMiddleware<Action_documentation>();
-////            //app.UseCors(Cors);
-
-////            app.UseHttpsRedirection();
-
-////            app.UseAuthorization();
-
-////            app.MapControllers();
-
-////            app.Run();
-////        }
-////    }
-////}
-
-//using BL.Interface;
-//using BL.Services;
-//using DAL.Data;
-//using DAL.Interfaces;
-//using Microsoft.EntityFrameworkCore;
-//using MODELS.Model;
-//using Project.middleWare;
-//using System.Globalization;
-
-//var builder = WebApplication.CreateBuilder(args);
-
-//// Add services to the container.
-
-//builder.Services.AddControllers();
-//// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-//builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
-//builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-//builder.Services.AddDbContext<DbContext>(op => op.UseSqlServer("Data Source=DESKTOP-F77S003\\SQLEXPRESS01;Initial Catalog=s;Integrated Security=SSPI;Trusted_Connection=True;"));
-//builder.Services.AddScoped<IUserService, UserService>();
-//builder.Services.AddScoped<IPictureService, PictureService>();
-//builder.Services.AddScoped<IUserData, UserData>();
-//builder.Services.AddScoped<IPictureData, PictureData>();
-//var app = builder.Build();
-
-//// Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
-//    app.UseSwagger();
-//    app.UseSwaggerUI();
-//}
-//app.UseMiddleware<ErrorGlobalMiddleWare>();
-////app.UseMiddleware<Action_documentation>();
-//app.UseHttpsRedirection();
-
-//app.UseAuthorization();
-
-//app.MapControllers();
-
-//app.Run();
-using AutoMapper;
-using DAL.Interfaces;
+using BL;
 using DAL.Data;
-using DAL.Profiles;
-using Microsoft.AspNetCore.Localization;
+using DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.OpenApi.Models;
 using MODELS.Model;
-using System.Globalization;
-using System.ComponentModel;
+using Serilog;
+using Image_encryption.middleWare;
 using BL.Interface;
 using BL.Services;
 using Project.middleWare;
-namespace Image_encryption;
-
-public class Program
+using Microsoft.Extensions.Options;
+var builder = WebApplication.CreateBuilder(args);
+//
+// Add services to the container.
+string myCors = "_myCors";
+builder.Services.AddControllers();
+builder.Services.AddAuthorization(options =>
 {
-    public static void Main(string[] args)
+    options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("RequireCustomerRole", policy => policy.RequireRole("Customer"));
+    options.AddPolicy("AdminOrCustomer", policy => policy.RequireRole("Admin", "Customer"));
+});
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        var builder = WebApplication.CreateBuilder(args);
-        builder.Services.Configure<RequestLocalizationOptions>(options =>
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Please enter JWT token with Bearer into field"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
         {
-            options.DefaultRequestCulture = new RequestCulture(CultureInfo.InvariantCulture);
-        });
-
-        // Add services to the container.
-        builder.Services.AddControllers();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
-
-        // Register IUser service
-        builder.Services.AddScoped<IUserData, UserData>();
-        builder.Services.AddScoped<IPictureData, PictureData>();
-        builder.Services.AddScoped<IPictureService, PictureService>();
-        builder.Services.AddScoped<IUserService, UserService>();
-        // Add DbContext
-        builder.Services.AddControllersWithViews();
-        builder.Services.AddDbContext<DBContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultDataBase")));
-        //// Add JWT authentication services
-        //// Add JWT authentication services
-        //builder.Services.AddAuthentication(options =>
-        //{
-        //    options.DefaultAuthenticateScheme = "JwtBearer";
-        //    options.DefaultChallengeScheme = "JwtBearer";
-        //}).AddJwtBearer("JwtBearer", jwtOptions =>
-        //{
-        //    jwtOptions.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-        //    {
-        //        // הגדרות אימות JWT כאן
-        //    };
-        //});
-        // Add AutoMapper with the mapping profile
-        builder.Services.AddAutoMapper(typeof(PictureProfile).Assembly);
-        builder.Services.AddAutoMapper(typeof(UserProfile).Assembly);
-
-
-        var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI();
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
         }
-        app.UseMiddleware<ErrorGlobalMiddleWare>();
-        app.UseHttpsRedirection();
-        app.UseAuthorization();
-        app.MapControllers();
-        app.Run();
-    }
+    });
+});
+builder.Services.AddControllersWithViews();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddCors(op =>
+{
+    op.AddPolicy(myCors,
+        builder =>
+        {
+            builder.WithOrigins("*")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+        });
+});
+
+
+//connection string
+//builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<DBContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultDataBase"));
+    options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+}, ServiceLifetime.Transient);
+       
+
+
+builder.Services.AddDbContext< DbContext>(options =>
+{
+    options.UseSqlServer("name=ConnectionStrings:WarOfMindsDB");
+   
+}, ServiceLifetime.Transient);
+
+
+
+builder.Services.AddScoped<IUserData, UserData>();
+   builder.Services.AddScoped<IPictureData, PictureData>();
+       builder.Services.AddScoped<IPictureService, PictureService>();
+      builder.Services.AddScoped<IUserService, UserService>();// Add JWT Authentication
+builder.Services.AddSingleton<IImageViewerService, ImageViewerService>();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.File(@"C:\myLogDoc.txt",
+    rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+var app = builder.Build();
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+app.UseCors(myCors);
+app.UseHttpsRedirection();
+app.UseMiddleware<ErrorGlobalMiddleWare>();
+app.UseMiddleware<JWTmiddlware>();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapControllers();
+//app.UseMiddleware<IdValidationMiddleware>();
+
+
+app.Run();

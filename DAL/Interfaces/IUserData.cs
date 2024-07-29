@@ -14,6 +14,8 @@ namespace DAL.Interfaces
         public Task<UserDto> GetUser(int userId); 
         public Task<List<UserDto>> GetAllUsers();
         public Task<bool> ResetPassword(string password, int id);
+        public Task<bool> DeleteUser(int idToDelete);
+
 
     }
 }
