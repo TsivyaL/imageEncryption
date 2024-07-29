@@ -12,9 +12,9 @@ namespace DAL.DTO
         public byte[] EncryptionPicture { get; set; }
         public DateTime dateCreate { get; set; }
         public int CreateUserId { get; set; }
-        public byte[] keyBase64 { get; set; }
-        public byte[] ivBase64 { get; set; }
-        public PictureDto(byte[] EncryptionPicture, DateTime dateCreate, int CreateUserId, byte[] keyBase64, byte[] ivBase64)
+        public string keyBase64 { get; set; }
+        public string ivBase64 { get; set; }
+        public PictureDto(byte[] EncryptionPicture, DateTime dateCreate, int CreateUserId, string keyBase64, string ivBase64)
         {
             this.EncryptionPicture = EncryptionPicture; 
             this.dateCreate = dateCreate;   

@@ -159,3 +159,4 @@ D:\Image encryption\Image encryption\obj\Debug\net8.0\refint\Image encryption.dl
 D:\Image encryption\Image encryption\obj\Debug\net8.0\Image encryption.pdb
 D:\Image encryption\Image encryption\obj\Debug\net8.0\Image encryption.genruntimeconfig.cache
 D:\Image encryption\Image encryption\obj\Debug\net8.0\ref\Image encryption.dll
+D:\Image encryption\Image encryption\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

@@ -70,6 +70,14 @@
               "target": "Package",
               "version": "[0.8.0, )"
             },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.7, )"
+            },
+            "Microsoft.AspNetCore.Components.Forms": {
+              "target": "Package",
+              "version": "[8.0.7, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.6, )"
@@ -83,6 +91,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.6, )"
+            },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[8.0.1, )"
             },
             "Serilog": {
               "target": "Package",
@@ -102,7 +114,23 @@
             },
             "SixLabors.ImageSharp": {
               "target": "Package",
-              "version": "[3.1.4, )"
+              "version": "[3.1.5, )"
+            },
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[8.0.7, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.0.1, )"
+            },
+            "System.Reactive.Windows.Forms": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            },
+            "System.Windows.Forms.Ribbon35": {
+              "target": "Package",
+              "version": "[3.5.8, )"
             },
             "YmChat": {
               "target": "Package",
@@ -195,6 +223,10 @@
               "target": "Package",
               "version": "[0.8.0, )"
             },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.7, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.6, )"
@@ -208,6 +240,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.6, )"
+            },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[8.0.1, )"
             },
             "Serilog": {
               "target": "Package",
@@ -225,9 +261,9 @@
               "target": "Package",
               "version": "[6.6.1, )"
             },
-            "SixLabors.ImageSharp": {
+            "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
-              "version": "[3.1.4, )"
+              "version": "[8.0.1, )"
             },
             "YmChat": {
               "target": "Package",
@@ -316,6 +352,10 @@
               "target": "Package",
               "version": "[0.8.0, )"
             },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.7, )"
+            },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
               "version": "[8.0.6, )"
@@ -329,6 +369,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[8.0.6, )"
+            },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[8.0.1, )"
             },
             "Serilog": {
               "target": "Package",
@@ -346,9 +390,9 @@
               "target": "Package",
               "version": "[6.6.1, )"
             },
-            "SixLabors.ImageSharp": {
+            "System.IdentityModel.Tokens.Jwt": {
               "target": "Package",
-              "version": "[3.1.4, )"
+              "version": "[8.0.1, )"
             },
             "YmChat": {
               "target": "Package",
